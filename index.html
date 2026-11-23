@@ -113,7 +113,7 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 50px}
     <ol class="steps">
       <li><div class="num">1</div><div><h3>素材放進一個 Drive 資料夾</h3><p>開一個新資料夾，把這支影片要用的片段、照片和口白音檔（m4a／mp3／wav 皆可）都放進去，不用改檔名。</p></div></li>
       <li><div class="num">2</div><div><h3>把資料夾共用給史傳奇</h3><p>在 Drive 按「共用」，把資料夾共用給<b>已連接史傳奇的 Google 帳號</b>，權限選「編輯者」，成片才放得回去。</p></div></li>
-      <li><div class="num">3</div><div><h3>填工單、用學校信箱寄出</h3><p>貼上資料夾連結、寫一句主題，按「送出工單」會打開郵件 App，<b>用學校信箱 shinwei0623@gapp.ylsh.ilc.edu.tw 按寄出</b>。成片會放回同一個資料夾，史傳奇也會在 Grok Bot 聊天裡回報。</p></div></li>
+      <li><div class="num">3</div><div><h3>填工單、用已登記的信箱寄出</h3><p>貼上資料夾連結、寫一句主題，按「送出工單」會打開郵件 App，<b>用已登記的信箱按寄出</b>。成片會放回同一個資料夾，史傳奇也會在 Grok Bot 聊天裡回報。</p></div></li>
     </ol>
     <div class="tips" aria-label="拍攝小技巧">
       <span class="chip">📱 手機直式拍</span>
@@ -158,8 +158,8 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 50px}
       <textarea id="style" name="style" placeholder="例如：節奏輕快、溫馨、結尾放學校 Logo、不要出現某某鏡頭" maxlength="120"></textarea>
       <button class="btn btn-primary btn-block" style="margin-top:20px" type="submit" id="sendBtn">✉️ 送出工單（開啟郵件）</button>
       <div class="mailtip">
-        <b>請用學校信箱寄出：</b>shinwei0623@gapp.ylsh.ilc.edu.tw<br>
-        其他信箱寄的信不會開工。寄出後，史傳奇會在 Grok Bot 聊天裡回報進度。<br>
+        <b>請用已登記的信箱寄出，其他信箱寄的不會開工。</b><br>
+        寄出後，史傳奇會在 Grok Bot 聊天裡回報進度。<br>
         <span class="muted">收件者：z0fgxcnx+reel@mail.grokbot.com</span>
       </div>
       <button class="btn btn-ghost btn-block" style="margin-top:10px" type="button" id="testBtn">寄一封測試信（確認史傳奇收得到）</button>
@@ -183,7 +183,6 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 50px}
 (function(){
   "use strict";
   var TO = "z0fgxcnx+reel@mail.grokbot.com";
-  var FROM = "shinwei0623@gapp.ylsh.ilc.edu.tw";
   var MAX_URL = 2000; // 保守的 mailto 長度上限，避免部分郵件 App 截斷
   var $ = function(id){ return document.getElementById(id); };
 
@@ -268,7 +267,7 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 50px}
     $("mailBtn").href = url;
     $("fallback").hidden = false;
     notice(n, "info", "📨 郵件 App 已打開，請按「寄出」",
-      "寄件者要是學校信箱 " + FROM + "，其他信箱寄的不會開工。工單編號 " + job.job_id + "。寄出後史傳奇會在 Grok Bot 聊天裡回報，成片放回同一個 Drive 資料夾。");
+      "請用已登記的信箱寄出，其他信箱寄的不會開工。工單編號 " + job.job_id + "。寄出後史傳奇會在 Grok Bot 聊天裡回報，成片放回同一個 Drive 資料夾。");
     openMail(url);
   });
 
@@ -276,7 +275,7 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 50px}
     var t = { type:"test", job_id:"test-" + jobId("test").slice(0,15), sent_at:new Date().toISOString() };
     var body = "史傳奇你好，這是 Reel Studio 的測試信，不需要剪片，收到請在聊天回報「測試信收到」。\n\n---- 工單 JSON ----\n" + JSON.stringify(t);
     var url = "mailto:" + TO + "?subject=" + encodeURIComponent("Reel 工單｜測試連線") + "&body=" + encodeURIComponent(body);
-    notice($("sendNotice"), "info", "📨 測試信已寫好，請用學校信箱按「寄出」", "幾分鐘內史傳奇會在 Grok Bot 聊天裡回報「測試信收到」。沒回報的話，請確認寄件者是 " + FROM + "。");
+    notice($("sendNotice"), "info", "📨 測試信已寫好，請用已登記的信箱按「寄出」", "幾分鐘內史傳奇會在 Grok Bot 聊天裡回報「測試信收到」。沒回報的話，請確認是用已登記的信箱寄出。");
     openMail(url);
   });
 
