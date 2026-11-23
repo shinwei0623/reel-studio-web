@@ -75,13 +75,8 @@ textarea{min-height:88px;resize:vertical}
 .notice b{display:block;margin-bottom:4px}
 .notice span{white-space:pre-line}
 pre.json{background:#14121f;color:#e8e6f5;border-radius:12px;padding:12px;font-size:12.5px;line-height:1.5;overflow:auto;max-height:220px;white-space:pre-wrap;word-break:break-all}
-details.setup{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:6px 22px;margin-top:18px}
-details.setup summary{cursor:pointer;font-weight:700;padding:14px 0;list-style:none;display:flex;justify-content:space-between;align-items:center}
-details.setup summary::-webkit-details-marker{display:none}
-details.setup summary::after{content:"＋";color:var(--muted)}
-details.setup[open] summary::after{content:"－"}
-.status-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#c9c4d6;margin-right:6px;vertical-align:middle}
-.status-dot.on{background:var(--ok)}
+.mailtip{margin-top:12px;background:#fff8e6;border:1px solid #f3dfa6;color:#6b4a00;border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.6;word-break:break-all}
+.mailtip .muted{font-size:13px}
 .btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
 footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 50px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#14121f;color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:9}
@@ -118,7 +113,7 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 50px}
     <ol class="steps">
       <li><div class="num">1</div><div><h3>素材放進一個 Drive 資料夾</h3><p>開一個新資料夾，把這支影片要用的片段、照片和口白音檔（m4a／mp3／wav 皆可）都放進去，不用改檔名。</p></div></li>
       <li><div class="num">2</div><div><h3>把資料夾共用給史傳奇</h3><p>在 Drive 按「共用」，把資料夾共用給<b>已連接史傳奇的 Google 帳號</b>，權限選「編輯者」，成片才放得回去。</p></div></li>
-      <li><div class="num">3</div><div><h3>填工單、按送出</h3><p>貼上資料夾連結，寫一句主題。完成後成片會出現在同一個資料夾，史傳奇也會在聊天裡通知你。</p></div></li>
+      <li><div class="num">3</div><div><h3>填工單、用學校信箱寄出</h3><p>貼上資料夾連結、寫一句主題，按「送出工單」會打開郵件 App，<b>用學校信箱 shinwei0623@gapp.ylsh.ilc.edu.tw 按寄出</b>。成片會放回同一個資料夾，史傳奇也會在 Grok Bot 聊天裡回報。</p></div></li>
     </ol>
     <div class="tips" aria-label="拍攝小技巧">
       <span class="chip">📱 手機直式拍</span>
@@ -131,7 +126,7 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 50px}
 
   <section class="card" id="order" aria-labelledby="order-h">
     <h2 id="order-h">影片工單</h2>
-    <p class="muted"><span class="status-dot" id="connDot"></span><span id="connText">尚未完成第一次設定</span></p>
+    <p class="muted">按下送出會打開郵件 App，信已經寫好，只要按「寄出」。</p>
     <form id="jobForm" novalidate>
       <div class="f" data-f="drive">
         <label for="drive">Google Drive 資料夾連結</label>
@@ -140,12 +135,12 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 50px}
       </div>
       <div class="f" data-f="name">
         <label for="name">專案名稱</label>
-        <input id="name" name="name" type="text" placeholder="例如：洗手宣導、運動會花絮" maxlength="40" required>
+        <input id="name" name="name" type="text" placeholder="例如：洗手宣導、運動會花絮" maxlength="30" required>
         <div class="field-err">請填專案名稱。</div>
       </div>
       <div class="f" data-f="topic">
         <label for="topic">主題一句話</label>
-        <textarea id="topic" name="topic" placeholder="例如：讓國一新生 30 秒學會正確洗手五步驟" maxlength="200" required></textarea>
+        <textarea id="topic" name="topic" placeholder="例如：讓國一新生 30 秒學會正確洗手五步驟" maxlength="80" required></textarea>
         <div class="field-err">請用一句話說明這支影片想傳達什麼。</div>
       </div>
       <div class="f" data-f="secs">
@@ -160,49 +155,26 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 50px}
         <input type="radio" id="vm2" name="voice" value="captions_music"><label for="vm2"><b>🎵 字幕＋音樂</b><span>沒有口白，史傳奇寫字幕配音樂</span></label>
       </div>
       <label for="style">風格備註 <span class="opt">（選填）</span></label>
-      <textarea id="style" name="style" placeholder="例如：節奏輕快、溫馨、結尾放學校 Logo、不要出現某某鏡頭" maxlength="500"></textarea>
-      <button class="btn btn-primary btn-block" style="margin-top:20px" type="submit" id="sendBtn">送出工單</button>
+      <textarea id="style" name="style" placeholder="例如：節奏輕快、溫馨、結尾放學校 Logo、不要出現某某鏡頭" maxlength="120"></textarea>
+      <button class="btn btn-primary btn-block" style="margin-top:20px" type="submit" id="sendBtn">✉️ 送出工單（開啟郵件）</button>
+      <div class="mailtip">
+        <b>請用學校信箱寄出：</b>shinwei0623@gapp.ylsh.ilc.edu.tw<br>
+        其他信箱寄的信不會開工。寄出後，史傳奇會在 Grok Bot 聊天裡回報進度。<br>
+        <span class="muted">收件者：z0fgxcnx+reel@mail.grokbot.com</span>
+      </div>
+      <button class="btn btn-ghost btn-block" style="margin-top:10px" type="button" id="testBtn">寄一封測試信（確認史傳奇收得到）</button>
     </form>
     <div class="notice" id="sendNotice" role="status" aria-live="polite"></div>
     <div id="fallback" hidden>
-      <p class="muted" style="margin:14px 0 6px">備援方式：把下面的工單內容複製起來，貼到和史傳奇的聊天裡，效果一樣。</p>
+      <p class="muted" style="margin:14px 0 6px">郵件 App 沒有打開？把下面的工單內容複製起來，貼到 Grok Bot 和史傳奇的聊天裡，效果一樣；或自己寫信寄到 z0fgxcnx+reel@mail.grokbot.com 並貼上。</p>
       <pre class="json" id="jobJson"></pre>
       <div class="btns">
         <button class="btn btn-primary" type="button" id="copyBtn">📋 複製工單內容</button>
-        <a class="btn btn-ghost" id="mailBtn" href="#" hidden>✉️ 用 Email 寄出</a>
+        <a class="btn btn-ghost" id="mailBtn" href="#">✉️ 再開一次郵件</a>
       </div>
     </div>
   </section>
 
-  <details class="setup" id="setup">
-    <summary>⚙️ 第一次設定（只要做一次）</summary>
-    <p class="muted" style="margin-top:0">在 Grok Bot App 打開史傳奇 → 點名字 → 詳細資料 → Routines → 影片工單 routine 的 Webhook 區，把「POST to」網址和「key」複製貼到這裡。資料只會存在<b>這台裝置的瀏覽器</b>，不會上傳到任何地方；換手機或清除瀏覽資料後要重貼一次。如果「測試連線」顯示瀏覽器被擋，代表 Grok Bot 目前不接受網頁直接送出，送出工單時改用「複製工單內容」貼到聊天即可。</p>
-    <label for="hookUrl">Webhook 網址（POST to）</label>
-    <input id="hookUrl" type="url" inputmode="url" placeholder="https://api2.cursor.sh/automations/webhook/…" autocomplete="off">
-    <label for="hookKey">金鑰（key）</label>
-    <div class="row">
-      <input id="hookKey" type="password" placeholder="貼上 key，或整行 header 也可以" autocomplete="off" spellcheck="false">
-      <button class="btn btn-ghost" type="button" id="toggleKey" style="flex:0 0 auto">顯示</button>
-    </div>
-    <div class="hint">直接貼「header」那一整行（Authorization: Bearer …）也行，網頁會自動拆開。</div>
-    <label for="hdrMode">金鑰放在哪個 header <span class="opt">（一般不用改）</span></label>
-    <select id="hdrMode">
-      <option value="bearer">Authorization: Bearer &lt;key&gt;（預設）</option>
-      <option value="custom">自訂 header 名稱</option>
-    </select>
-    <div id="customWrap" hidden>
-      <label for="hdrName">自訂 header 名稱</label>
-      <input id="hdrName" type="text" placeholder="例如 X-Automation-Key" autocomplete="off">
-    </div>
-    <label for="mailTo">備援 Email <span class="opt">（選填，送出失敗時可一鍵寄出工單）</span></label>
-    <input id="mailTo" type="email" placeholder="例如史傳奇的 Email 信箱" autocomplete="off">
-    <div class="btns">
-      <button class="btn btn-primary" type="button" id="saveBtn">儲存設定</button>
-      <button class="btn btn-ghost" type="button" id="testBtn">測試連線</button>
-    </div>
-    <button class="btn btn-ghost btn-block" type="button" id="clearBtn" style="margin:10px 0 16px">清除這台裝置上的設定</button>
-    <div class="notice" id="setupNotice" role="status" aria-live="polite" style="margin-bottom:16px"></div>
-  </details>
 </main>
 <footer>史傳奇 Reel Studio · 宜蘭高中衛生組 · 網頁不會保存或上傳你的影片</footer>
 <div class="toast" id="toast"></div>
@@ -210,110 +182,27 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 50px}
 <script>
 (function(){
   "use strict";
-  var LS = "reelStudio.settings.v1";
+  var TO = "z0fgxcnx+reel@mail.grokbot.com";
+  var FROM = "shinwei0623@gapp.ylsh.ilc.edu.tw";
+  var MAX_URL = 2000; // 保守的 mailto 長度上限，避免部分郵件 App 截斷
   var $ = function(id){ return document.getElementById(id); };
 
-  function load(){ try { return JSON.parse(localStorage.getItem(LS)) || {}; } catch(e){ return {}; } }
-  function store(s){ localStorage.setItem(LS, JSON.stringify(s)); }
-
-  function toast(msg){ var t=$("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(function(){t.classList.remove("show");},2200); }
+  function toast(msg){ var t=$("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(function(){t.classList.remove("show");},2400); }
   function notice(el, kind, title, body){
-    el.className = "notice show " + kind;
-    el.innerHTML = "";
+    el.className = "notice show " + kind; el.innerHTML = "";
     var b=document.createElement("b"); b.textContent=title; el.appendChild(b);
     if (body){ var s=document.createElement("span"); s.textContent=body; el.appendChild(s); }
   }
-
-  // Accept a raw key, "Bearer xxx", or a whole header line "Authorization: Bearer xxx"
-  function parseKey(raw, mode){
-    var k = (raw||"").trim();
-    var m = k.match(/^([A-Za-z0-9-]+)\s*:\s*(.+)$/);
-    var headerName = null;
-    if (m && !/^https?$/i.test(m[1])) { headerName = m[1]; k = m[2].trim(); }
-    k = k.replace(/^Bearer\s+/i, "").trim();
-    return { key:k, headerName:headerName };
-  }
-
-  function refreshConn(){
-    var s = load();
-    var ready = !!(s.url && s.key);
-    $("connDot").classList.toggle("on", ready);
-    $("connText").textContent = ready ? "已設定 webhook，送出後會直接通知史傳奇" : "尚未完成第一次設定（仍可送出，會改用複製備援）";
-  }
-
-  function fillSetup(){
-    var s = load();
-    $("hookUrl").value = s.url || "";
-    $("hookKey").value = s.key || "";
-    $("hdrMode").value = s.mode || "bearer";
-    $("hdrName").value = s.headerName || "";
-    $("mailTo").value = s.mail || "";
-    $("customWrap").hidden = $("hdrMode").value !== "custom";
-    if (!s.url) $("setup").open = false;
-  }
-
-  function readSetup(){
-    var url = $("hookUrl").value.trim();
-    var mode = $("hdrMode").value;
-    var parsed = parseKey($("hookKey").value, mode);
-    var headerName = $("hdrName").value.trim();
-    if (parsed.headerName && parsed.headerName.toLowerCase() !== "authorization") { mode = "custom"; headerName = parsed.headerName; }
-    return { url:url, key:parsed.key, mode:mode, headerName:headerName, mail:$("mailTo").value.trim() };
-  }
-
-  function validSetup(s){
-    if (!/^(https:\/\/\S+|http:\/\/(localhost|127\.0\.0\.1)(:\d+)?\/\S*)$/i.test(s.url)) return "Webhook 網址要以 https:// 開頭，請從 routine 面板的「POST to」整段複製。";
-    if (!s.key) return "請貼上金鑰（key）。";
-    if (s.mode === "custom" && !/^[A-Za-z0-9-]+$/.test(s.headerName)) return "自訂 header 名稱只能有英文、數字和 -。";
-    return null;
-  }
-
-  function headersFor(s){
-    var h = { "Content-Type":"application/json" };
-    if (s.mode === "custom") h[s.headerName] = s.key; else h["Authorization"] = "Bearer " + s.key;
-    return h;
-  }
-
-  function explain(status, bodyText){
-    var detail = bodyText ? ("伺服器回覆：" + bodyText.slice(0,160)) : "";
-    if (status === 401) return ["金鑰不對或已更換（401）", "請回 routine 面板重新複製 key，貼到「第一次設定」後再試。" + (detail?"\n"+detail:"")];
-    if (status === 403) return ["沒有權限（403）", "這個網路或帳號被拒絕了。" + (detail?"\n"+detail:"")];
-    if (status === 404) return ["找不到這個 webhook（404）", "網址可能貼錯或 routine 已刪除，請重新複製「POST to」。"];
-    if (status === 400) return ["工單被退回（400）", "routine 可能已暫停，或格式不符。" + (detail?"\n"+detail:"")];
-    if (status === 429) return ["送太多次了（429）", "請等一兩分鐘再試。"];
-    if (status >= 500) return ["Grok Bot 伺服器暫時有狀況（" + status + "）", "請稍後再試，或先用下方「複製工單內容」貼到聊天。"];
-    return ["送出失敗（" + status + "）", detail];
-  }
-
-  function post(payload){
-    var s = load();
-    var ctrl = ("AbortController" in window) ? new AbortController() : null;
-    var timer = ctrl ? setTimeout(function(){ ctrl.abort(); }, 15000) : null;
-    return fetch(s.url, { method:"POST", mode:"cors", headers:headersFor(s), body:JSON.stringify(payload), signal: ctrl ? ctrl.signal : undefined })
-      .then(function(r){ return r.text().then(function(t){ if (timer) clearTimeout(timer); return { ok:r.ok, status:r.status, text:t }; }); })
-      .catch(function(e){ if (timer) clearTimeout(timer); return { ok:false, status:0, error:e }; });
-  }
-
-  function networkMsg(res){
-    if (res.error && res.error.name === "AbortError") return ["等太久沒有回應", "網路可能不穩，請換個網路再試，或用下方「複製工單內容」。"];
-    return ["瀏覽器沒辦法直接連到 webhook", "可能是網路斷線，或 Grok Bot 不接受從網頁直接送出（瀏覽器的跨網域限制）。這次沒有送到，請改用「複製工單內容」，貼到和史傳奇的聊天即可。"];
-  }
-
-  // ---------- job form ----------
   function driveId(u){
     var m = (u||"").match(/drive\.google\.com\/(?:drive\/(?:u\/\d+\/)?folders\/|open\?id=)([A-Za-z0-9_-]{10,})/);
     return m ? m[1] : null;
   }
-  function slugify(name){
-    var ascii = (name||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
-    return ascii || "reel";
-  }
+  function slugify(name){ return (name||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"") || "reel"; }
   function pad(n){ return (n<10?"0":"")+n; }
   function jobId(name){
     var d=new Date();
-    return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+"-"+pad(d.getHours())+pad(d.getMinutes())+pad(d.getSeconds())+"-"+slugify(name).slice(0,24);
+    return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+"-"+pad(d.getHours())+pad(d.getMinutes())+pad(d.getSeconds())+"-"+slugify(name).slice(0,20);
   }
-
   function setInvalid(f, bad){ document.querySelector('[data-f="'+f+'"]').classList.toggle("invalid", bad); }
 
   function buildJob(){
@@ -321,40 +210,38 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 50px}
     var secs=parseInt($("secs").value,10);
     var voice=(document.querySelector('input[name="voice"]:checked')||{}).value||"voiceover";
     var style=$("style").value.trim();
-    var bad=false;
-    var fid=driveId(drive);
-    setInvalid("drive", !fid); bad = bad || !fid;
-    setInvalid("name", !name); bad = bad || !name;
-    setInvalid("topic", !topic); bad = bad || !topic;
-    var badSecs = !(secs>=10 && secs<=180); setInvalid("secs", badSecs); bad = bad || badSecs;
-    if (bad) return null;
-    var id = jobId(name);
-    var voiceText = voice === "voiceover" ? "資料夾裡有真人口白音檔" : "沒有口白，只上字幕配音樂";
-    return {
-      type: "reel_job",
-      version: 1,
-      job_id: id,
-      submitted_at: new Date().toISOString(),
-      drive_folder_url: drive,
-      drive_folder_id: fid,
-      project_name: name,
-      topic: topic,
-      target_seconds: secs,
-      voice_mode: voice,
-      style_notes: style,
-      context: "【Reel 工單 " + id + "】專案：" + name + "｜主題：" + topic + "｜目標 " + secs + " 秒｜口白：" + voiceText + (style ? "｜風格：" + style : "") + "｜素材資料夾：" + drive
-    };
+    var fid=driveId(drive), badSecs=!(secs>=10 && secs<=180);
+    setInvalid("drive", !fid); setInvalid("name", !name); setInvalid("topic", !topic); setInvalid("secs", badSecs);
+    if (!fid || !name || !topic || badSecs) return null;
+    return { type:"reel_job", version:1, job_id:jobId(name), submitted_at:new Date().toISOString(),
+      drive_folder_url:"https://drive.google.com/drive/folders/"+fid, drive_folder_id:fid,
+      project_name:name, topic:topic, target_seconds:secs, voice_mode:voice, style_notes:style };
   }
 
-  function showFallback(job){
-    $("jobJson").textContent = JSON.stringify(job, null, 2);
-    var s = load();
-    var mb = $("mailBtn");
-    if (s.mail) {
-      mb.hidden = false;
-      mb.href = "mailto:" + encodeURIComponent(s.mail) + "?subject=" + encodeURIComponent("【Reel 工單】" + job.project_name) + "&body=" + encodeURIComponent("史傳奇你好，這是新的影片工單：\n\n" + JSON.stringify(job, null, 2));
-    } else { mb.hidden = true; }
-    $("fallback").hidden = false;
+  function summary(job, full){
+    var v = job.voice_mode === "voiceover" ? "有真人口白（資料夾裡的音檔）" : "沒有口白，字幕＋音樂";
+    var lines = ["史傳奇你好，這是新的影片工單：", "",
+      "專案：" + job.project_name,
+      "主題：" + job.topic,
+      "目標秒數：" + job.target_seconds + " 秒",
+      "口白方式：" + v];
+    if (job.style_notes && full) lines.push("風格備註：" + job.style_notes);
+    lines.push("素材資料夾：" + job.drive_folder_url);
+    return lines.join("\n");
+  }
+
+  function mailtoFor(job, subject){
+    var json = JSON.stringify(job);
+    var make = function(body){ return "mailto:" + TO + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body); };
+    var url = make(summary(job, true) + "\n\n---- 工單 JSON（請勿修改）----\n" + json);
+    if (url.length > MAX_URL) url = make(summary(job, false) + "\n（風格備註見 JSON）\n\n---- 工單 JSON（請勿修改）----\n" + json);
+    if (url.length > MAX_URL) url = make("Reel 工單（摘要見 JSON）\n---- 工單 JSON（請勿修改）----\n" + json);
+    var j2 = JSON.parse(json);
+    while (url.length > MAX_URL && j2.style_notes) {
+      j2.style_notes = j2.style_notes.slice(0, Math.max(0, j2.style_notes.length - 10));
+      url = make("Reel 工單（摘要見 JSON，風格備註過長已截短）\n---- 工單 JSON（請勿修改）----\n" + JSON.stringify(j2));
+    }
+    return url;
   }
 
   function copyText(txt){
@@ -366,61 +253,36 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 50px}
     });
   }
 
+  function openMail(url){ window.location.href = url; }
+
   $("jobForm").addEventListener("submit", function(ev){
     ev.preventDefault();
-    var job = buildJob();
-    var n = $("sendNotice");
-    if (!job){ notice(n, "err", "還有欄位需要補一下", "請看紅字提示。"); var first=document.querySelector(".invalid input,.invalid textarea"); if (first) first.focus(); return; }
-    var s = load();
-    if (!s.url || !s.key){
-      notice(n, "info", "還沒完成第一次設定，所以先用備援方式", "請按「複製工單內容」，貼到和史傳奇的聊天裡。想要一鍵送出，請打開頁面最下方的「第一次設定」。");
-      showFallback(job); return;
+    var n=$("sendNotice"), job=buildJob();
+    if (!job){
+      notice(n, "err", "還有欄位需要補一下", "請看紅字提示。");
+      var first=document.querySelector(".invalid input,.invalid textarea"); if (first) first.focus();
+      return;
     }
-    var btn=$("sendBtn"); btn.disabled=true; btn.textContent="送出中…";
-    post(job).then(function(res){
-      btn.disabled=false; btn.textContent="送出工單";
-      if (res.ok){
-        notice(n, "ok", "✅ 工單已送到史傳奇", "工單編號 " + job.job_id + "。史傳奇開工後會在聊天裡回報，成片會放回同一個 Drive 資料夾。");
-        $("fallback").hidden = true;
-        return;
-      }
-      var m = res.status ? explain(res.status, res.text) : networkMsg(res);
-      notice(n, "err", m[0], m[1]);
-      showFallback(job);
-    });
+    var url = mailtoFor(job, "Reel 工單｜" + job.project_name);
+    $("jobJson").textContent = summary(job, true) + "\n\n---- 工單 JSON ----\n" + JSON.stringify(job, null, 2);
+    $("mailBtn").href = url;
+    $("fallback").hidden = false;
+    notice(n, "info", "📨 郵件 App 已打開，請按「寄出」",
+      "寄件者要是學校信箱 " + FROM + "，其他信箱寄的不會開工。工單編號 " + job.job_id + "。寄出後史傳奇會在 Grok Bot 聊天裡回報，成片放回同一個 Drive 資料夾。");
+    openMail(url);
+  });
+
+  $("testBtn").addEventListener("click", function(){
+    var t = { type:"test", job_id:"test-" + jobId("test").slice(0,15), sent_at:new Date().toISOString() };
+    var body = "史傳奇你好，這是 Reel Studio 的測試信，不需要剪片，收到請在聊天回報「測試信收到」。\n\n---- 工單 JSON ----\n" + JSON.stringify(t);
+    var url = "mailto:" + TO + "?subject=" + encodeURIComponent("Reel 工單｜測試連線") + "&body=" + encodeURIComponent(body);
+    notice($("sendNotice"), "info", "📨 測試信已寫好，請用學校信箱按「寄出」", "幾分鐘內史傳奇會在 Grok Bot 聊天裡回報「測試信收到」。沒回報的話，請確認寄件者是 " + FROM + "。");
+    openMail(url);
   });
 
   $("copyBtn").addEventListener("click", function(){
     copyText($("jobJson").textContent).then(function(){ toast("已複製，貼到和史傳奇的聊天就好"); }, function(){ toast("無法自動複製，請長按上方文字手動複製"); });
   });
-
-  // ---------- setup ----------
-  $("hdrMode").addEventListener("change", function(){ $("customWrap").hidden = this.value !== "custom"; });
-  $("toggleKey").addEventListener("click", function(){ var k=$("hookKey"); var show=k.type==="password"; k.type= show?"text":"password"; this.textContent= show?"隱藏":"顯示"; });
-  $("saveBtn").addEventListener("click", function(){
-    var s = readSetup(), err = validSetup(s), n=$("setupNotice");
-    if (err){ notice(n, "err", "設定還不完整", err); return; }
-    store(s); fillSetup(); refreshConn();
-    notice(n, "ok", "已儲存在這台裝置", "建議按「測試連線」確認一下。");
-  });
-  $("clearBtn").addEventListener("click", function(){
-    localStorage.removeItem(LS); fillSetup(); refreshConn();
-    notice($("setupNotice"), "info", "已清除", "這台裝置上的 webhook 網址與金鑰都刪掉了。");
-  });
-  $("testBtn").addEventListener("click", function(){
-    var s = readSetup(), err = validSetup(s), n=$("setupNotice");
-    if (err){ notice(n, "err", "設定還不完整", err); return; }
-    store(s); refreshConn();
-    var b=this; b.disabled=true; b.textContent="測試中…";
-    post({ type:"test", sent_at:new Date().toISOString(), context:"Reel Studio 網頁測試連線，不需要做任何事。" }).then(function(res){
-      b.disabled=false; b.textContent="測試連線";
-      if (res.ok){ notice(n, "ok", "✅ 連線成功", "Grok Bot 收到了測試訊號，之後送出工單就會直接通知史傳奇。"); return; }
-      var m = res.status ? explain(res.status, res.text) : networkMsg(res);
-      notice(n, "err", m[0], m[1] + "\n設定已存下；送出工單時若仍失敗，會自動提供「複製工單內容」備援。");
-    });
-  });
-
-  fillSetup(); refreshConn();
 })();
 </script>
 </body>
