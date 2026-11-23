@@ -154,6 +154,20 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 50px}
         <input type="radio" id="vm1" name="voice" value="voiceover" checked><label for="vm1"><b>🎙 有真人口白</b><span>資料夾裡有錄好的口白音檔</span></label>
         <input type="radio" id="vm2" name="voice" value="captions_music"><label for="vm2"><b>🎵 字幕＋音樂</b><span>沒有口白，史傳奇寫字幕配音樂</span></label>
       </div>
+      <label for="styleSel">剪輯風格</label>
+      <select id="styleSel" name="styleSel">
+        <option value="auto" selected>自動判斷｜依主題與素材自動選（推薦）</option>
+        <option value="promo_bright">產品推廣｜明亮俐落，重點上色、卡拍</option>
+        <option value="campus_vlog">校園紀錄｜清新生活感，輕快自然</option>
+        <option value="psa_clear">公告宣導｜清楚可信，字幕加底框</option>
+        <option value="portrait_doc">人物故事｜紀錄片質感，慢節奏留白</option>
+        <option value="howto_steps">教學｜步驟清楚，動作做完才切</option>
+        <option value="recap_beat">活動回顧｜卡點高能，快剪配強節奏</option>
+        <option value="tribute_warm">感人紀念｜溫暖懷舊，溶接慢淡入</option>
+        <option value="comedy_pop">幽默｜快節奏反差，笑點放大</option>
+        <option value="documentary">紀錄片｜觀察式鏡頭、保留現場聲音（踏查、比賽）</option>
+      </select>
+      <div class="muted" style="margin-top:6px">不確定就選「自動判斷」，史傳奇看完素材會挑最適合的。</div>
       <label for="style">風格備註 <span class="opt">（選填）</span></label>
       <textarea id="style" name="style" placeholder="例如：節奏輕快、溫馨、結尾放學校 Logo、不要出現某某鏡頭" maxlength="120"></textarea>
       <button class="btn btn-primary btn-block" style="margin-top:20px" type="submit" id="sendBtn">✉️ 送出工單（開啟郵件）</button>
@@ -184,6 +198,7 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 50px}
   "use strict";
   var TO = "z0fgxcnx+reel@mail.grokbot.com";
   var MAX_URL = 2000; // 保守的 mailto 長度上限，避免部分郵件 App 截斷
+  var STYLE_NAMES = {"auto":"自動判斷","promo_bright":"產品推廣","campus_vlog":"校園紀錄","psa_clear":"公告宣導","portrait_doc":"人物故事","howto_steps":"教學","recap_beat":"活動回顧","tribute_warm":"感人紀念","comedy_pop":"幽默","documentary":"紀錄片"};
   var $ = function(id){ return document.getElementById(id); };
 
   function toast(msg){ var t=$("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(function(){t.classList.remove("show");},2400); }
@@ -209,12 +224,13 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 50px}
     var secs=parseInt($("secs").value,10);
     var voice=(document.querySelector('input[name="voice"]:checked')||{}).value||"voiceover";
     var style=$("style").value.trim();
+    var preset=($("styleSel")||{}).value||"auto"; if (!STYLE_NAMES[preset]) preset="auto";
     var fid=driveId(drive), badSecs=!(secs>=10 && secs<=180);
     setInvalid("drive", !fid); setInvalid("name", !name); setInvalid("topic", !topic); setInvalid("secs", badSecs);
     if (!fid || !name || !topic || badSecs) return null;
     return { type:"reel_job", version:1, job_id:jobId(name), submitted_at:new Date().toISOString(),
       drive_folder_url:"https://drive.google.com/drive/folders/"+fid, drive_folder_id:fid,
-      project_name:name, topic:topic, target_seconds:secs, voice_mode:voice, style_notes:style };
+      project_name:name, topic:topic, target_seconds:secs, voice_mode:voice, style:preset, style_notes:style };
   }
 
   function summary(job, full){
@@ -223,7 +239,8 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 50px}
       "專案：" + job.project_name,
       "主題：" + job.topic,
       "目標秒數：" + job.target_seconds + " 秒",
-      "口白方式：" + v];
+      "口白方式：" + v,
+      "剪輯風格：" + (STYLE_NAMES[job.style] || "自動判斷") + (job.style && job.style !== "auto" ? "（" + job.style + "）" : "")];
     if (job.style_notes && full) lines.push("風格備註：" + job.style_notes);
     lines.push("素材資料夾：" + job.drive_folder_url);
     return lines.join("\n");
@@ -239,6 +256,14 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 50px}
     while (url.length > MAX_URL && j2.style_notes) {
       j2.style_notes = j2.style_notes.slice(0, Math.max(0, j2.style_notes.length - 10));
       url = make("Reel 工單（摘要見 JSON，風格備註過長已截短）\n---- 工單 JSON（請勿修改）----\n" + JSON.stringify(j2));
+    }
+    if (url.length > MAX_URL) { // 仍太長：拿掉可推算的欄位（資料夾 ID 由網址推回）
+      delete j2.drive_folder_id; delete j2.submitted_at;
+      url = make("Reel 工單（摘要見 JSON）\n---- 工單 JSON（請勿修改）----\n" + JSON.stringify(j2));
+    }
+    while (url.length > MAX_URL && j2.topic.length > 10) {
+      j2.topic = j2.topic.slice(0, j2.topic.length - 5);
+      url = make("Reel 工單（主題過長已截短）\n---- 工單 JSON（請勿修改）----\n" + JSON.stringify(j2));
     }
     return url;
   }
