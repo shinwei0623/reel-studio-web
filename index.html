@@ -78,6 +78,11 @@ pre.json{background:#14121f;color:#e8e6f5;border-radius:12px;padding:12px;font-s
 .mailtip{margin-top:12px;background:#fff8e6;border:1px solid #f3dfa6;color:#6b4a00;border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.6;word-break:break-all}
 .mailtip .muted{font-size:13px}
 .btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.docnote{display:none;margin-top:10px;background:#f3f0ff;border:1.5px solid #d9d0ff;color:#2f2a8a;border-radius:14px;padding:14px 16px;font-size:14.5px;line-height:1.65}
+.docnote.show{display:block}
+.docnote b{display:block;font-size:15.5px;margin-bottom:4px}
+.docnote .doclinks{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.docnote .doclinks a{flex:1 1 auto;min-height:44px;padding:11px 14px;font-size:15px}
 footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 50px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#14121f;color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:9}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -167,6 +172,14 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 50px}
         <option value="comedy_pop">幽默｜快節奏反差，笑點放大</option>
         <option value="documentary">紀錄片｜觀察式鏡頭、保留現場聲音（踏查、比賽）</option>
       </select>
+      <div class="docnote" id="docNote" role="status" aria-live="polite">
+        <b>📘 有「紀錄片指導文件」可以用</b>
+        帶學生拍紀錄片、參加神腦原鄉踏查紀錄片競賽時可參考：選題、田調、訪談提綱、拍攝同意書、拍攝清單、剪接流程、比賽繳交檢查清單，以及歷屆得獎作品與參考資源。成片會是 16:9 橫式，可加人名條、地點字卡、章節卡與片尾名單。
+        <div class="doclinks">
+          <a class="btn btn-primary" href="docs/documentary-guide.html" target="_blank" rel="noopener">開啟指導文件</a>
+          <a class="btn btn-ghost" href="docs/documentary-guide.md" download>下載 .md</a>
+        </div>
+      </div>
       <div class="muted" style="margin-top:6px">不確定就選「自動判斷」，史傳奇看完素材會挑最適合的。</div>
       <label for="style">風格備註 <span class="opt">（選填）</span></label>
       <textarea id="style" name="style" placeholder="例如：節奏輕快、溫馨、結尾放學校 Logo、不要出現某某鏡頭" maxlength="120"></textarea>
@@ -278,6 +291,11 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:30px 0 50px}
   }
 
   function openMail(url){ window.location.href = url; }
+
+  // 選「紀錄片」時顯示指導文件提醒，換回其他風格就收起
+  function syncDocNote(){ $("docNote").classList.toggle("show", $("styleSel").value === "documentary"); }
+  $("styleSel").addEventListener("change", syncDocNote);
+  syncDocNote();
 
   $("jobForm").addEventListener("submit", function(ev){
     ev.preventDefault();
